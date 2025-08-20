@@ -11,7 +11,15 @@ def optimize(start, fun, stop_crit=0.0001):
     Returns:
         tuple: The optimizer followed by the optimum of fun as estimated by
         Newton's method.
+
+    Example:
+        >>> import newton
+        >>> import numpy as np
+        >>> newton.optimize(1, np.sin)
+        (np.float64(1.5707463267949306), np.float64(0.99999999875))
+        # this is very close to sine's local maximum at (pi / 2, 1)
     """
+
     # initize the difference in excess of the stopping criterion so the while
     # loop can start
     step_diff = stop_crit + 1
@@ -36,6 +44,14 @@ def deriv(fun, epsilon=0.0001):
 
     Returns:
         function: An estimate for the first derivative of fun.
+
+    Example:
+        >>> import newton
+        >>> import numpy as np
+        >>> sin_prime = newton.deriv(np.sin) # this should approximate cosine
+        >>> sin_prime(0)
+        np.float64(0.9999999983333334)
+        # this is very close to cos(0) = 1
     """
 
     def first_deriv(x):
