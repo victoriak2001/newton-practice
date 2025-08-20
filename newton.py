@@ -17,7 +17,7 @@ def optimize(start, fun, stop_crit=0.0001):
 
 # take a function and (optional) a finite difference epsilon.
 # return a finite difference approximation of its first derivative.
-def deriv(fun):
-    def first_deriv(x, epsilon=0.0001):
+def deriv(fun, epsilon=0.0001):
+    def first_deriv(x):
         return (fun(x + epsilon) - fun(x)) / epsilon
     return first_deriv
