@@ -1,6 +1,6 @@
-import numpy.linalg as npla
+import numpy as np
 import numdifftools as nd
-import scipy.linalg as scila
+import scipy
 
 def optimize(start, fun, stop_crit=1e-5):
     """
@@ -99,6 +99,10 @@ def optimize_multivar(start, fun, stop_crit=1e-5):
     if not callable(fun):
         raise TypeError(f"Argument fun is not a function. \
                         It is of type {type(fun)}.")
+    
+    if not isinstance(start, np.ndarray):
+        raise TypeError(f"Argument start is not a numpy array. \
+                        It is of type {type(start)}")
 
     # initize the difference in excess of the stopping criterion so the while
     # loop can start
@@ -109,15 +113,15 @@ def optimize_multivar(start, fun, stop_crit=1e-5):
         h = nd.Hessian(fun)(x_t)
         g = nd.Gradient(fun)(x_t)
 
-        x_t_plus_one = x_t - scila.solve(h, g)
-        step_diff_new = npla.norm(x_t_plus_one - x_t)
+        x_t_plus_one = x_t - scipy.linalg.solve(h, g)
+        step_diff_new = np.linalg.norm(x_t_plus_one - x_t)
         x_t = x_t_plus_one
 
         if step_diff_new > 2 * step_diff:
             return "Newton's method failed to converge"
         step_diff = step_diff_new
 
-        if npla.norm(x_t) > 1e8:
+        if np.linalg.norm(x_t) > 1e8:
             raise RuntimeError("Optimization appears to be diverging")
 
     return (x_t, fun(x_t))
