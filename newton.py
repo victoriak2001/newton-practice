@@ -2,7 +2,7 @@ import numpy as np
 import numdifftools as nd
 import scipy
 
-def optimize(start, fun, stop_crit=1e-5):
+def optimize(start, fun, stop_crit=1e-4):
     """
     Run Newton's method to find the optimizer and optimum of a given function.
 
@@ -38,7 +38,7 @@ def optimize(start, fun, stop_crit=1e-5):
     x_t = start
 
     while step_diff > stop_crit:
-        x_t_plus_one = x_t - deriv(fun)(x_t) / deriv(deriv(fun))(x_t)
+        x_t_plus_one = x_t - deriv(fun)(x_t) / deriv(deriv(fun, epslion=1e-8))(x_t)
         step_diff_new = abs(x_t_plus_one - x_t)
         x_t = x_t_plus_one
 
@@ -78,13 +78,13 @@ def deriv(fun, epsilon=1e-5):
 
     return first_deriv
 
-def optimize_multivar(start, fun, stop_crit=1e-5):
+def optimize_multivar(start, fun, stop_crit=1e-4):
     """
     Run Newton's method to find the optimizer and optimum of a given 
     multivariate function.
 
     Args:
-        start (list): The starting value of Newton's method.
+        start (array): The starting value of Newton's method.
         fun (function): The function being optimized.
         stop_crit (float, optional): The stopping criterion for the difference
         between consecutive Newton iterations.
