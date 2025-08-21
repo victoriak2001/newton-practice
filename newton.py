@@ -1,4 +1,4 @@
-def optimize(start, fun, stop_crit=0.0001):
+def optimize(start, fun, stop_crit=1e-5):
     """
     Run Newton's method to find the optimizer and optimum of a given function.
 
@@ -11,6 +11,7 @@ def optimize(start, fun, stop_crit=0.0001):
     Returns:
         tuple: The optimizer followed by the optimum of fun as estimated by
         Newton's method.
+        str: A brief description of why Newton's method failed, if applicable
 
     Example:
         >>> import newton
@@ -19,6 +20,17 @@ def optimize(start, fun, stop_crit=0.0001):
         (np.float64(1.5707463267949306), np.float64(0.99999999875))
         # this is very close to sine's local maximum at (pi / 2, 1)
     """
+    if not callable(fun):
+        raise TypeError(
+            f"Argument fun is not a function. \
+                        It is of type {type(fun)}."
+        )
+
+    if type(start) is not int and type(start) is not float:
+        raise TypeError(
+            f"Argument start is not an integer or a float. \
+        It is of type {type(start)}."
+        )
 
     # initize the difference in excess of the stopping criterion so the while
     # loop can start
@@ -27,13 +39,20 @@ def optimize(start, fun, stop_crit=0.0001):
 
     while step_diff > stop_crit:
         x_t_plus_one = x_t - deriv(fun)(x_t) / deriv(deriv(fun))(x_t)
-        step_diff = abs(x_t_plus_one - x_t)
+        step_diff_new = abs(x_t_plus_one - x_t)
         x_t = x_t_plus_one
+
+        if step_diff_new > 2 * step_diff:
+            return "Newton's method failed to converge"
+        step_diff = step_diff_new
+
+        if x_t > 1e8:
+            raise RuntimeError("Optimization appears to be diverging")
 
     return (x_t, fun(x_t))
 
 
-def deriv(fun, epsilon=0.0001):
+def deriv(fun, epsilon=1e-5):
     """
     Use a difference quotient to estimate the derivative of a given function.
 
